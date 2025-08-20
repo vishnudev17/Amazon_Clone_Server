@@ -29,9 +29,9 @@ authRouter.post("/api/signup/", async (req, res) => {
 });
 //SignIn
 
-authRouter.post('/api/signIn/', async (req, res) => {
+authRouter.post('/api/LogIn/', async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       res.status(400).json({ msg: 'User with this email doesn\'t exist!' });
@@ -47,7 +47,6 @@ authRouter.post('/api/signIn/', async (req, res) => {
     res.status(500).json({ error: e.message });
 
   }
-
 });
 
 module.exports = authRouter;
