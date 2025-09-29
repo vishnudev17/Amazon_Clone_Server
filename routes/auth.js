@@ -2,11 +2,12 @@ const express = require("express");
 const User = require("../models/user");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const auth = require("../middleware/auth");
 
 const authRouter = express.Router();
 //signUp
 
-authRouter.post("/api/signup/", async (req, res) => {
+authRouter.post("/api/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
     const existingUser = await User.findOne({ email });
@@ -29,7 +30,7 @@ authRouter.post("/api/signup/", async (req, res) => {
 });
 //SignIn
 
-authRouter.post("/api/logIn/", async (req, res) => {
+authRouter.post("/api/logIn", async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
@@ -51,7 +52,7 @@ authRouter.post("/api/logIn/", async (req, res) => {
 
 //tokenValid
 
-authRouter.post("tokenIsValid", async (req, res) => {
+authRouter.post("/tokenIsValid", async (req, res) => {
   try {
     const token = req.header('x-auth-token');
     if (!token) return res.json(false);
@@ -64,6 +65,14 @@ authRouter.post("tokenIsValid", async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
+
+});
+
+//getUserData
+
+authRouter.get("/", auth, async (req, res) => {
+  const user = User.findById(req.user);
+  res.json({ ...user._doc, token: req.token });
 
 });
 
